@@ -1,85 +1,36 @@
 # 课程视频自动拆分器
 
-## 1. 安装
+> 从教学视频中自动提取 PPT 页面、生成带时间戳的讲稿，并将 PPT 与对应讲稿进行自动对齐，为 AI 辅助重构课程、PPT 和演讲稿提供结构化素材。
 
-```bash
-sudo apt update
-sudo apt install -y ffmpeg python3-venv
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -r requirements.txt
-```
+---
 
-如果你用的是 NVIDIA GPU + CUDA，faster-whisper 会走 CUDA；首次运行会自动下载 Whisper 模型。
+## ✨ 项目简介
 
-## 2. 运行
+课程视频自动拆分器（Lecture Splitter）是一个用于处理课程、讲座和教学视频的自动化工具。
 
-假设 MP4 在：
+当你只有一个包含：
 
-```text
-/mnt/d/lecture.mp4
-```
+- PPT 画面
+- 老师讲课声音
+- 视频字幕（如果有）
 
-运行：
-
-```bash
-python lecture_splitter.py /mnt/d/lecture.mp4 --out lecture_output
-```
-
-2060 Super 8GB 推荐先用：
-
-```bash
-python lecture_splitter.py /mnt/d/lecture.mp4 \
-  --out lecture_output \
-  --model small \
-  --device cuda \
-  --compute-type float16 \
-  --language zh
-```
-
-## 3. 输出
+的 MP4 视频时，本项目可以自动完成：
 
 ```text
-lecture_output/
-├── transcript.srt
-├── transcript.txt
-├── transcript.json
-├── slides.csv
-├── slides.md
-└── slides/
-    ├── 001.png
-    ├── 002.png
-    └── ...
-```
-
-`slides.csv` 的每一行就是一页 PPT：
-
-- start_ts：开始时间
-- end_ts：结束时间
-- image：截图
-- transcript：这一页对应的字幕
-
-## 4. 翻页检测不准怎么办
-
-PPT 页数太少：
-```bash
---threshold 0.75
-```
-
-PPT 页数太多：
-```bash
---threshold 0.65
-```
-
-一页 PPT 经常很短：
-```bash
---min-slide-sec 2.5
-```
-
-如果字幕在画面底部，占比比较大：
-```bash
---mask-bottom-ratio 0.30
-```
-
-如果老师的视频布局比较特殊（例如 PPT 只占画面中间一小块），告诉我视频画面布局，我可以再改检测算法。
+课程视频
+   │
+   ├── 🎙️ 语音识别
+   │       ↓
+   │   带时间戳的讲稿
+   │
+   ├── 📑 PPT 页面检测
+   │       ↓
+   │   自动识别翻页
+   │
+   ├── 📸 PPT 截图
+   │       ↓
+   │   每页 PPT 一张图片
+   │
+   └── 🔗 时间轴对齐
+           ↓
+      PPT ←→ 对应讲稿
